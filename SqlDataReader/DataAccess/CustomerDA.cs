@@ -1,4 +1,5 @@
-﻿using SqlDataReader.Models;
+﻿using Microsoft.Data.SqlClient;
+using SqlDataReader.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,20 @@ namespace SqlDataReader.DataAccess
     {
         internal Customer GetCustomer(int id)
         {
-            throw new NotImplementedException();
+            string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email" +
+                $" FROM Customer WHERE CustomerId = @id";
+
+            using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    // using (SqlDataReader reader = cmd.ExecuteReader()) { }
+                }
+            }
         }
 
         internal Customer GetCustomer(string name)

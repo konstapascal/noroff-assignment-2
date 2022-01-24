@@ -23,5 +23,6 @@ namespace SqlDataReader.DataAccess
 
             return builder.ConnectionString;
         }
+
     }
 }
