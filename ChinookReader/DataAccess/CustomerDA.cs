@@ -1,12 +1,12 @@
 ﻿using Microsoft.Data.SqlClient;
-using SqlDataReader.Models;
+using ChinookReader.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SqlDataReader.DataAccess
+namespace ChinookReader.DataAccess
 {
     internal class CustomerDA
     {

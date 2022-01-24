@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SqlDataReader.DataAccess
+namespace ChinookReader.DataAccess
 {
     internal static class ConnectionHelper
     {
