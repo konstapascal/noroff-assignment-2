@@ -1,1 +1,0 @@
-DELETE FROM Assistant WHERE Name='Alfred';

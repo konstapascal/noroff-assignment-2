@@ -1,9 +1,0 @@
-INSERT INTO [Superhero] ([Name], [Alias], [Origin]) VALUES ('Peter Parker', 'Spiderman','Got bitten by a radioactive spider');
-INSERT INTO [Superhero] ([Name], [Alias], [Origin]) VALUES ('Clark Kent','Superman', 'Born and raised American Alien');
-INSERT INTO [Superhero] ([Name], [Alias], [Origin]) VALUES ('Bruce Banner', 'Hulk', 'Got very angry once and turned very green');
---INSERT INTO [Superhero] ([Name], [Alias], [Origin]) VALUES ('Bruce Wayne', 'Batman', 'His parents got killed and he turned into a bat');
-
-
-
-
-
