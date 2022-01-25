@@ -12,6 +12,7 @@ namespace ChinookReader.DataAccess
     {
         internal Customer GetCustomer(int id)
         {
+            Customer customer = new();
             string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email" +
                 $" FROM Customer WHERE CustomerId = @id";
 
@@ -23,15 +24,58 @@ namespace ChinookReader.DataAccess
                 {
                     cmd.Parameters.AddWithValue("@id", id);
 
-                    // using (SqlDataReader reader = cmd.ExecuteReader()) { }
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            customer.CustomerId = reader.GetInt32(0);
+                            customer.FirstName = reader.GetString(1);
+                            customer.LastName = reader.GetString(2);
+                            customer.Country = reader.GetString(3);
+                            customer.PostalCode = reader.GetString(4);
+                            customer.PhoneNumber = reader.GetString(5);
+                            customer.Email = reader.GetString(6);
+                        }
+
+                    }
                 }
             }
+            return customer;
         }
 
         internal Customer GetCustomer(string name)
         {
-            throw new NotImplementedException();
+            Customer customer = new();
+            string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email" +
+                $" FROM Customer WHERE FirstName = @name";
+
+            using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@name", name);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            customer.CustomerId = int.Parse(reader.GetString(0));
+                            customer.FirstName = reader.GetString(1);
+                            customer.LastName = reader.GetString(2);
+                            customer.Country = reader.GetString(3);
+                            customer.PostalCode = reader.GetString(4);
+                            customer.PhoneNumber = reader.GetString(5);
+                            customer.Email = reader.GetString(6);
+                        }
+
+                    }
+                }
+            }
+            return customer;
         }
+    
 
         internal List<Customer> GetAllCustomers()
         {

@@ -20,6 +20,7 @@ namespace ChinookReader.DataAccess
             builder.DataSource = @"ND-5CG92747KC\SQLEXPRESS";
             builder.InitialCatalog = "Chinook";
             builder.IntegratedSecurity = true;
+            builder.TrustServerCertificate = true;
 
             return builder.ConnectionString;
         }
