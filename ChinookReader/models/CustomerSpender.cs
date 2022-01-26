@@ -8,7 +8,7 @@ namespace ChinookReader.Models
 {
     internal class CustomerSpender
     {
-        public Customer Customer { get; set; }
-        public double TotalAmountSpent { get; set; }
+        public string CustomerName { get; set; }
+        public decimal TotalAmountSpent { get; set; }
     }
 }

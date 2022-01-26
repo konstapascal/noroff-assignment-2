@@ -8,7 +8,7 @@ namespace ChinookReader.Models
 {
     internal class CustomerCountry
     {
-        public IEnumerable<Customer> Customers { get; init; }
         public string CountryName { get; set; }
+        public int CustomerCount { get; set; }
     }
 }

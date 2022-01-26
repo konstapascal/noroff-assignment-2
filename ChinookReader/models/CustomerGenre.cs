@@ -8,7 +8,8 @@ namespace ChinookReader.Models
 {
     internal class CustomerGenre
     {
-        public Customer Customer { get; set; }
+        public string CustomerName { get; set; }
         public string GenreName { get; set; }
+        public int GenreCount { get; set; }
     }
 }

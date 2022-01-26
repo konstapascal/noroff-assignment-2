@@ -216,14 +216,109 @@ namespace ChinookReader.DataAccess
                 }
             }
         }
-        internal string CustomerCountByCountry(int id)
+        internal List<CustomerCountry> CustomerCountByCountry()
         {
-            throw new NotImplementedException();
+            List<CustomerCountry> list = new();
+
+            string sqlQuery = "SELECT TOP 5 Country, Count(*) as CustomerCount FROM Customer" +
+                " GROUP BY Country ORDER BY CustomerCount DESC;";
+
+            using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            CustomerCountry countryCustomerCount = new();
+
+                            countryCustomerCount.CountryName = reader.GetString(0);
+                            countryCustomerCount.CustomerCount = reader.GetInt32(1);
+
+                            list.Add(countryCustomerCount);
+                        }
+
+                    }
+                }
+
+                return list;
+            }
         }
 
-        internal List<CustomerSpender> TopHighestSpenders(int amount)
+        internal List<CustomerSpender> TopHighestSpenders()
         {
-            throw new NotImplementedException();
+            List<CustomerSpender> list = new();
+
+            string sqlQuery = "SELECT TOP 5 C.FirstName, I.Total as Total FROM Customer as C " +
+                "INNER JOIN Invoice as I ON C.CustomerId = I.CustomerId " +
+                "GROUP BY C.FirstName, I.Total ORDER BY I.Total DESC;";
+
+            using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            CustomerSpender custSpender = new();
+
+                            custSpender.CustomerName = reader.GetString(0);
+                            custSpender.TotalAmountSpent = reader.GetDecimal(1);
+
+                            list.Add(custSpender);
+                        }
+
+                    }
+                }
+
+                return list;
+            }
+        }
+
+        internal List<CustomerGenre> GetCustomerMostPopularGenre(int customerId)
+        {
+            List<CustomerGenre> list = new();
+
+            string sqlQuery = "SELECT TOP 1 WITH TIES C.FirstName, G.Name as Genre, Count(*) as Count " +
+                "FROM((((Customer as C " +
+                "INNER JOIN Invoice as I ON C.CustomerId = I.CustomerId) " +
+                "INNER JOIN InvoiceLine as IL ON I.InvoiceId = IL.InvoiceId) " +
+                "INNER JOIN Track as T ON T.TrackId = IL.TrackId) " +
+                "INNER JOIN Genre as G ON G.GenreId = T.GenreId) " +
+                "WHERE C.CustomerId = @id GROUP BY C.FirstName, G.Name ORDER BY Count DESC;";
+
+            using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", customerId);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            CustomerGenre custGenre = new();
+
+                            custGenre.CustomerName = reader.GetString(0);
+                            custGenre.GenreName = reader.GetString(1);
+                            custGenre.GenreCount = reader.GetInt32(2);
+
+                            list.Add(custGenre);
+                        }
+
+                    }
+                }
+
+                return list;
+            }
         }
         private string SafeGetString(SqlDataReader reader, int colIndex)
         {
