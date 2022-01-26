@@ -185,8 +185,8 @@ namespace ChinookReader.DataAccess
         internal int UpdateCustomer(Customer newCustomer)
         {
             string sqlQuery = "UPDATE Customer SET FirstName = @name, LastName = @lastName, " +
-                "Country = @country, PostalCode = @postalCode," +
-                " Phone = @phone, Email = @email " +
+                "Country = @country, PostalCode = @postalCode, " +
+                "Phone = @phone, Email = @email " +
                "WHERE CustomerId = @id;";
 
             Customer oldCustomer = GetCustomer(newCustomer.CustomerId);
@@ -218,10 +218,10 @@ namespace ChinookReader.DataAccess
         }
         internal List<CustomerCountry> CustomerCountByCountry()
         {
-            List<CustomerCountry> list = new();
+            List<CustomerCountry> customerCountCountryList = new();
 
-            string sqlQuery = "SELECT TOP 5 Country, Count(*) as CustomerCount FROM Customer" +
-                " GROUP BY Country ORDER BY CustomerCount DESC;";
+            string sqlQuery = "SELECT TOP 5 Country, Count(*) as CustomerCount FROM Customer " +
+                "GROUP BY Country ORDER BY CustomerCount DESC;";
 
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
             {
@@ -238,19 +238,19 @@ namespace ChinookReader.DataAccess
                             countryCustomerCount.CountryName = reader.GetString(0);
                             countryCustomerCount.CustomerCount = reader.GetInt32(1);
 
-                            list.Add(countryCustomerCount);
+                            customerCountCountryList.Add(countryCustomerCount);
                         }
 
                     }
                 }
 
-                return list;
+                return customerCountCountryList;
             }
         }
 
         internal List<CustomerSpender> TopHighestSpenders()
         {
-            List<CustomerSpender> list = new();
+            List<CustomerSpender> highestSpendersList = new();
 
             string sqlQuery = "SELECT TOP 5 C.FirstName, I.Total as Total FROM Customer as C " +
                 "INNER JOIN Invoice as I ON C.CustomerId = I.CustomerId " +
@@ -271,19 +271,19 @@ namespace ChinookReader.DataAccess
                             custSpender.CustomerName = reader.GetString(0);
                             custSpender.TotalAmountSpent = reader.GetDecimal(1);
 
-                            list.Add(custSpender);
+                            highestSpendersList.Add(custSpender);
                         }
 
                     }
                 }
 
-                return list;
+                return highestSpendersList;
             }
         }
 
         internal List<CustomerGenre> GetCustomerMostPopularGenre(int customerId)
         {
-            List<CustomerGenre> list = new();
+            List<CustomerGenre> popularGenreList = new();
 
             string sqlQuery = "SELECT TOP 1 WITH TIES C.FirstName, G.Name as Genre, Count(*) as Count " +
                 "FROM((((Customer as C " +
@@ -311,13 +311,13 @@ namespace ChinookReader.DataAccess
                             custGenre.GenreName = reader.GetString(1);
                             custGenre.GenreCount = reader.GetInt32(2);
 
-                            list.Add(custGenre);
+                            popularGenreList.Add(custGenre);
                         }
 
                     }
                 }
 
-                return list;
+                return popularGenreList;
             }
         }
         private string SafeGetString(SqlDataReader reader, int colIndex)

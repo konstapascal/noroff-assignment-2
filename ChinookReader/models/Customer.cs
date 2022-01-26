@@ -16,9 +16,9 @@ namespace ChinookReader.Models
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
 
-        public override string ToString()
-        {
-            return CustomerId.ToString() + " " + FirstName + " " + LastName + " " + Country + " " + PostalCode + " " + PhoneNumber + " " + Email;
-        }
+        public override string ToString() => 
+            $"{CustomerId} - {FirstName} {LastName} - {Country} {PostalCode} - {PhoneNumber} - {Email}";
     }
 }
+
+
