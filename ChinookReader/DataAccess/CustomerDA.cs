@@ -2,30 +2,39 @@
 using ChinookReader.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChinookReader.DataAccess
 {
     internal class CustomerDA
     {
+        /// <summary>
+        /// Retrieves a customer by id from the Customer table
+        /// </summary>
+        /// <param name="id">The id of the wanted customer</param>
+        /// <returns>Returns a Customer object</returns>
         internal Customer GetCustomer(int id)
         {
             Customer customer = new();
+
+            // The SQL query to be used
             string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email" +
                 $" FROM Customer WHERE CustomerId = @id;";
 
+            // Opening a connection to the database, with conection string
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
             {
                 conn.Open();
 
+                // Creating an SqlCommand object with the SQL query and the connection this will execute on
                 using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
                 {
+                    // Replacing parameters with actual values
                     cmd.Parameters.AddWithValue("@id", id);
 
+                    // Executing the query
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
+                        // For every row, 1 in this case, do what is inside the while loop
                         while (reader.Read())
                         {
                             customer.CustomerId = reader.GetInt32(0);
@@ -44,9 +53,15 @@ namespace ChinookReader.DataAccess
             return customer;
         }
 
+        /// <summary>
+        /// Retrieves a customer by name from the Customer table
+        /// </summary>
+        /// <param name="name">The name of the wanted customer</param>
+        /// <returns>Returns a Customer object</returns>
         internal List<Customer> GetCustomer(string name)
         {
             List<Customer> allCustomersList = new();
+
             string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email" +
                 $" FROM Customer WHERE FirstName LIKE @name;";
 
@@ -81,8 +96,11 @@ namespace ChinookReader.DataAccess
 
             return allCustomersList;
         }
-    
 
+        /// <summary>
+        /// Retrieves all customers from the Customer table
+        /// </summary>
+        /// <returns>Returns a list of Customer objects</returns>
         internal List<Customer> GetAllCustomers()
         {
             List<Customer> allCustomersList = new ();
@@ -120,6 +138,12 @@ namespace ChinookReader.DataAccess
             return allCustomersList;
         }
 
+        /// <summary>
+        /// Retrieves an amount of customers from the Customer table starting at the offset
+        /// </summary>
+        /// <param name="amount">The amount of customers to retrieve</param>
+        /// <param name="offset">Table row of the retrieval to start at</param>
+        /// <returns>Returns a list of Customer objects</returns>
         internal List<Customer> Get(int amount, int offset)
         {
             List<Customer> allCustomersList = new ();
@@ -159,6 +183,12 @@ namespace ChinookReader.DataAccess
 
             return allCustomersList;
         }
+
+        /// <summary>
+        /// Adds a new customer to the Customers table
+        /// </summary>
+        /// <param name="newCustomer">The Customer object to add</param>
+        /// <returns>Returns the number of affected rows in the table after the operation, 1 meaning a success</returns>
         internal int AddCustomer(Customer newCustomer)
         {
             string sqlQuery = "INSERT INTO Customer (FirstName, LastName, Country, PostalCode, Phone, Email)" +
@@ -172,31 +202,43 @@ namespace ChinookReader.DataAccess
                 {
                     cmd.Parameters.AddWithValue("@name", newCustomer.FirstName);
                     cmd.Parameters.AddWithValue("@lastName", newCustomer.LastName);
+
+                    // These are optional values, so we are checking to see if a NULL needs to be introduced
                     cmd.Parameters.AddWithValue("@country", (object) newCustomer.Country ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@postalCode", (object) newCustomer.PostalCode ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@phone", (object) newCustomer.PhoneNumber ?? DBNull.Value);
+                    
                     cmd.Parameters.AddWithValue("@email", newCustomer.Email);
 
+                    // Executing the command, updating the customer and returning number of affecter rows
                     return cmd.ExecuteNonQuery();
                 }
             }
         }
 
+        /// <summary>
+        /// Updates an existing customer on the Customer table
+        /// </summary>
+        /// <param name="newCustomer">The Customer object you want to update, identified by id, containing the new values</param>
+        /// <returns>Returns the number of affected rows in the table after the operation, 1 meaning a success</returns>
         internal int UpdateCustomer(Customer newCustomer)
         {
+            // The SQL query to be executed
             string sqlQuery = "UPDATE Customer SET FirstName = @name, LastName = @lastName, " +
                 "Country = @country, PostalCode = @postalCode, " +
                 "Phone = @phone, Email = @email " +
                "WHERE CustomerId = @id;";
 
-            Customer oldCustomer = GetCustomer(newCustomer.CustomerId);
+            // Retrieving the customer the user wants to update, with its original value
+            Customer originalCustomer = GetCustomer(newCustomer.CustomerId);
 
-            if (!(newCustomer.PhoneNumber is null)) oldCustomer.PhoneNumber = newCustomer.PhoneNumber;
-            if (!(newCustomer.Country is null)) oldCustomer.Country = newCustomer.Country;
-            if (!(newCustomer.PostalCode is null)) oldCustomer.PostalCode = newCustomer.PostalCode;
-            if (!(newCustomer.FirstName is null)) oldCustomer.FirstName = newCustomer.FirstName;
-            if (!(newCustomer.LastName is null)) oldCustomer.LastName = newCustomer.LastName;
-            if (!(newCustomer.Email is null)) oldCustomer.Email = newCustomer.Email;
+            // If the field is not null, so provided, update that field on the original Customer object
+            if (!(newCustomer.PhoneNumber is null)) originalCustomer.PhoneNumber = newCustomer.PhoneNumber;
+            if (!(newCustomer.Country is null)) originalCustomer.Country = newCustomer.Country;
+            if (!(newCustomer.PostalCode is null)) originalCustomer.PostalCode = newCustomer.PostalCode;
+            if (!(newCustomer.FirstName is null)) originalCustomer.FirstName = newCustomer.FirstName;
+            if (!(newCustomer.LastName is null)) originalCustomer.LastName = newCustomer.LastName;
+            if (!(newCustomer.Email is null)) originalCustomer.Email = newCustomer.Email;
 
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
             {
@@ -204,18 +246,25 @@ namespace ChinookReader.DataAccess
 
                 using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
                 {
-                    cmd.Parameters.AddWithValue("@id", oldCustomer.CustomerId);
-                    cmd.Parameters.AddWithValue("@name", oldCustomer.FirstName);
-                    cmd.Parameters.AddWithValue("@lastName", oldCustomer.LastName);
-                    cmd.Parameters.AddWithValue("@country", (object)oldCustomer.Country ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@postalCode", (object)oldCustomer.PostalCode ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@phone", (object)oldCustomer.PhoneNumber ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@email", oldCustomer.Email);
+                    // Replacing parameters with either original customers value or the new provided value
+                    cmd.Parameters.AddWithValue("@id", originalCustomer.CustomerId);
+                    cmd.Parameters.AddWithValue("@name", originalCustomer.FirstName);
+                    cmd.Parameters.AddWithValue("@lastName", originalCustomer.LastName);
+                    cmd.Parameters.AddWithValue("@country", (object)originalCustomer.Country ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@postalCode", (object)originalCustomer.PostalCode ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@phone", (object)originalCustomer.PhoneNumber ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@email", originalCustomer.Email);
 
                     return cmd.ExecuteNonQuery();
                 }
             }
         }
+
+        /// <summary>
+        /// Updates an existing customer on the Customer table
+        /// </summary>
+        /// <param name="newCustomer">The Customer object you want to update, identified by id, containing the new values</param>
+        /// <returns>Returns the number of affected rows in the table after the operation, 1 meaning a success</returns>
         internal List<CustomerCountry> CustomerCountByCountry()
         {
             List<CustomerCountry> customerCountCountryList = new();
@@ -248,12 +297,16 @@ namespace ChinookReader.DataAccess
             }
         }
 
+        /// <summary>
+        /// Gets the top 5 highest spending customers and the amount they have spent, in a descending order
+        /// </summary>
+        /// <returns>Returns a list of CustomerSpender objects, containing customer name and amount spent</returns>
         internal List<CustomerSpender> TopHighestSpenders()
         {
             List<CustomerSpender> highestSpendersList = new();
 
-            string sqlQuery = "SELECT TOP 5 C.FirstName, I.Total as Total FROM Customer as C " +
-                "INNER JOIN Invoice as I ON C.CustomerId = I.CustomerId " +
+            string sqlQuery = "SELECT TOP 5 C.FirstName, I.Total AS Total FROM Customer AS C " +
+                "INNER JOIN Invoice AS I ON C.CustomerId = I.CustomerId " +
                 "GROUP BY C.FirstName, I.Total ORDER BY I.Total DESC;";
 
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
@@ -281,16 +334,23 @@ namespace ChinookReader.DataAccess
             }
         }
 
+        /// <summary>
+        /// Gets the top 1 genre, with ties, of the customer with specified id.
+        /// </summary>
+        /// <param name="customerId">The id of the customer you want to get the top genre of</param>
+        /// <returns>Returns a list of CustomerGenre objects, containing the customers name, genre name and the amount of tracks for that genre</returns>
         internal List<CustomerGenre> GetCustomerMostPopularGenre(int customerId)
         {
             List<CustomerGenre> popularGenreList = new();
 
-            string sqlQuery = "SELECT TOP 1 WITH TIES C.FirstName, G.Name as Genre, Count(*) as Count " +
-                "FROM((((Customer as C " +
-                "INNER JOIN Invoice as I ON C.CustomerId = I.CustomerId) " +
-                "INNER JOIN InvoiceLine as IL ON I.InvoiceId = IL.InvoiceId) " +
-                "INNER JOIN Track as T ON T.TrackId = IL.TrackId) " +
-                "INNER JOIN Genre as G ON G.GenreId = T.GenreId) " +
+
+            // monkaW
+            string sqlQuery = "SELECT TOP 1 WITH TIES C.FirstName, G.Name AS Genre, Count(*) AS Count " +
+                "FROM((((Customer AS C " +
+                "INNER JOIN Invoice AS I ON C.CustomerId = I.CustomerId) " +
+                "INNER JOIN InvoiceLine AS IL ON I.InvoiceId = IL.InvoiceId) " +
+                "INNER JOIN Track AS T ON T.TrackId = IL.TrackId) " +
+                "INNER JOIN Genre AS G ON G.GenreId = T.GenreId) " +
                 "WHERE C.CustomerId = @id GROUP BY C.FirstName, G.Name ORDER BY Count DESC;";
 
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
@@ -320,6 +380,15 @@ namespace ChinookReader.DataAccess
                 return popularGenreList;
             }
         }
+
+        // Source: https://stackoverflow.com/questions/1772025/sql-data-reader-handling-null-column-values/1772037#1772037
+
+        /// <summary>
+        /// Safe alternative to SqlDataReader objects GetString method, that will first check if entry is null in the the column
+        /// </summary>
+        /// <param name="reader">The object instance of SqlDataReader</param>
+        /// <param name="colIndex">Column index that you want to check the value for</param>
+        /// <returns>Returns either the value itself as a string or and empty string if that would otherwise be null</returns>
         private string SafeGetString(SqlDataReader reader, int colIndex)
         {
             if (!reader.IsDBNull(colIndex))

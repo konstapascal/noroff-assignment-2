@@ -32,7 +32,7 @@ namespace ChinookReader
             Console.WriteLine(addCustomerReturn);
 
             Console.WriteLine("---------- 6 ----------");
-            int updateCustomerReturn = da.UpdateCustomer(new Customer { CustomerId = 60, FirstName = "Konstantinos", LastName = "Pascal", Country = "Norway", Email = "konstapascal@gmail.com" });
+            int updateCustomerReturn = da.UpdateCustomer(new Customer { CustomerId = 60, FirstName = "Konstantinos", LastName = "Pascal", Country = "Greece", Email = "konstapascal@gmail.com" });
             Console.WriteLine(updateCustomerReturn);
 
             Console.WriteLine("---------- 7 ----------");

@@ -1,3 +1,3 @@
 UPDATE Superhero
-SET Name = N'MIles Morales'
-WHERE Name = N'Peter Parker';
+SET Name = 'Miles Morales'
+WHERE Name = 'Peter Parker';

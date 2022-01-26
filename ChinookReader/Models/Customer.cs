@@ -16,6 +16,10 @@ namespace ChinookReader.Models
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
 
+        /// <summary>
+        /// Override of the ToString method
+        /// </summary>
+        /// <returns>A formatted string containing the customers properties</returns>
         public override string ToString() => 
             $"{CustomerId} - {FirstName} {LastName} - {Country} {PostalCode} - {PhoneNumber} - {Email}";
     }

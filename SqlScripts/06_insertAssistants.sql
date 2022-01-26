@@ -1,3 +1,3 @@
-INSERT INTO [Assistant] ([Name]) VALUES (N'Alfred');
-INSERT INTO [Assistant] ([Name]) VALUES (N'Lois Lane');
-INSERT INTO [Assistant] ([Name]) VALUES (N'Mary Jane');
+INSERT INTO [Assistant] ([Name]) VALUES ('Alfred');
+INSERT INTO [Assistant] ([Name]) VALUES ('Lois Lane');
+INSERT INTO [Assistant] ([Name]) VALUES ('Mary Jane');
