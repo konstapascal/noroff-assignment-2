@@ -261,10 +261,9 @@ namespace ChinookReader.DataAccess
         }
 
         /// <summary>
-        /// Updates an existing customer on the Customer table
+        /// Returns a list of top 5 countries with most users ordered in descending order
         /// </summary>
-        /// <param name="newCustomer">The Customer object you want to update, identified by id, containing the new values</param>
-        /// <returns>Returns the number of affected rows in the table after the operation, 1 meaning a success</returns>
+        /// <returns>Returns a list of CustomreCountry objects</returns>
         internal List<CustomerCountry> CustomerCountByCountry()
         {
             List<CustomerCountry> customerCountCountryList = new();
