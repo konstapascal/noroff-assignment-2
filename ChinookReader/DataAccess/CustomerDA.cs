@@ -348,7 +348,6 @@ namespace ChinookReader.DataAccess
         {
             List<CustomerGenre> popularGenreList = new();
 
-
             // monkaW
             string sqlQuery = "SELECT TOP 1 WITH TIES C.FirstName, G.Name, Count(*) AS Count " +
                 "FROM Customer AS C " +
