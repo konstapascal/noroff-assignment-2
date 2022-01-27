@@ -17,7 +17,7 @@ namespace ChinookReader.DataAccess
         {
             SqlConnectionStringBuilder builder = new();
             
-            builder.DataSource = @"DESKTOP-P7G8DHC\SQLEXPRESS";
+            builder.DataSource = @"ND-5CG9030M9M\SQLEXPRESS";
             builder.InitialCatalog = "Chinook";
             builder.IntegratedSecurity = true;
             builder.TrustServerCertificate = true;

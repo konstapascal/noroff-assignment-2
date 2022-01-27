@@ -46,7 +46,7 @@ namespace ChinookReader
                 Console.WriteLine(entry.CustomerName + ": " + entry.TotalAmountSpent);
 
             Console.WriteLine("---------- 9 ----------");
-            List<CustomerGenre> mostPopularGenre = da.GetCustomerMostPopularGenre(14);
+            List<CustomerGenre> mostPopularGenre = da.GetCustomerMostPopularGenre(36);
             foreach (var entry in mostPopularGenre)
                 Console.WriteLine(entry.CustomerName + ", " + entry.GenreName + ": " 
                     + entry.GenreCount + " tracks");
