@@ -18,8 +18,8 @@ namespace ChinookReader.DataAccess
             Customer customer = new();
 
             // The SQL query to be used
-            string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email" +
-                $" FROM Customer WHERE CustomerId = @id;";
+            string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email " +
+                $"FROM Customer WHERE CustomerId = @id;";
 
             // Opening a connection to the database, with conection string
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
@@ -63,8 +63,8 @@ namespace ChinookReader.DataAccess
         {
             List<Customer> allCustomersList = new();
 
-            string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email" +
-                $" FROM Customer WHERE FirstName LIKE @name;";
+            string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email " +
+                $"FROM Customer WHERE FirstName LIKE @name;";
 
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
             {
@@ -149,8 +149,10 @@ namespace ChinookReader.DataAccess
         {
             List<Customer> allCustomersList = new();
 
-            string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email" +
-                $" FROM Customer ORDER BY CustomerId OFFSET @offset ROWS FETCH NEXT @amount ROWS ONLY;";
+            string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email " +
+                $"FROM Customer " +
+                $"ORDER BY CustomerId " +
+                $"OFFSET @offset ROWS FETCH NEXT @amount ROWS ONLY;";
 
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
             {
@@ -262,16 +264,17 @@ namespace ChinookReader.DataAccess
         }
 
         /// <summary>
-        /// Updates an existing customer on the Customer table
+        /// Returns a list of top 5 countries with most users ordered in descending order
         /// </summary>
-        /// <param name="newCustomer">The Customer object you want to update, identified by id, containing the new values</param>
-        /// <returns>Returns the number of affected rows in the table after the operation, 1 meaning a success</returns>
-        public List<CustomerCountry> CustomerCountByCountry()
+        /// <returns>Returns a list of CustomerCountry objects</returns>
+        internal List<CustomerCountry> CustomerCountByCountry()
         {
             List<CustomerCountry> customerCountCountryList = new();
 
-            string sqlQuery = "SELECT TOP 5 Country, Count(*) as CustomerCount FROM Customer " +
-                "GROUP BY Country ORDER BY CustomerCount DESC;";
+            string sqlQuery = "SELECT TOP 5 Country, Count(*) AS CustomerCount " +
+                "FROM Customer " +
+                "GROUP BY Country " +
+                "ORDER BY CustomerCount DESC;";
 
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
             {
@@ -306,9 +309,11 @@ namespace ChinookReader.DataAccess
         {
             List<CustomerSpender> highestSpendersList = new();
 
-            string sqlQuery = "SELECT TOP 5 C.FirstName, I.Total AS Total FROM Customer AS C " +
+            string sqlQuery = "SELECT TOP 5 C.FirstName, I.Total AS Total " +
+                "FROM Customer AS C " +
                 "INNER JOIN Invoice AS I ON C.CustomerId = I.CustomerId " +
-                "GROUP BY C.FirstName, I.Total ORDER BY I.Total DESC;";
+                "GROUP BY C.FirstName, I.Total " +
+                "ORDER BY I.Total DESC;";
 
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))
             {
@@ -344,14 +349,13 @@ namespace ChinookReader.DataAccess
         {
             List<CustomerGenre> popularGenreList = new();
 
-
             // monkaW
-            string sqlQuery = "SELECT TOP 1 WITH TIES C.FirstName, G.Name AS Genre, Count(*) AS Count " +
-                "FROM((((Customer AS C " +
-                "INNER JOIN Invoice AS I ON C.CustomerId = I.CustomerId) " +
-                "INNER JOIN InvoiceLine AS IL ON I.InvoiceId = IL.InvoiceId) " +
-                "INNER JOIN Track AS T ON T.TrackId = IL.TrackId) " +
-                "INNER JOIN Genre AS G ON G.GenreId = T.GenreId) " +
+            string sqlQuery = "SELECT TOP 1 WITH TIES C.FirstName, G.Name, Count(*) AS Count " +
+                "FROM Customer AS C " +
+                "INNER JOIN Invoice AS I ON C.CustomerId = I.CustomerId " +
+                "INNER JOIN InvoiceLine AS IL ON I.InvoiceId = IL.InvoiceId " +
+                "INNER JOIN Track AS T ON T.TrackId = IL.TrackId " +
+                "INNER JOIN Genre AS G ON G.GenreId = T.GenreId " +
                 "WHERE C.CustomerId = @id GROUP BY C.FirstName, G.Name ORDER BY Count DESC;";
 
             using (SqlConnection conn = new SqlConnection(ConnectionHelper.GetConnectionString()))

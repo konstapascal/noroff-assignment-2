@@ -4,6 +4,10 @@
 </p>
 
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+  <img alt="Version" src="https://img.shields.io/badge/version-0.1-blue.svg?cacheSeconds=2592000" />
+  <a href="#" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  </a>
 
 Noroff assignment number 2, written by Konstantinos Pascal and Darius Davidonis.
 
@@ -44,7 +48,6 @@ You may now run the **Program.cs** file to see the ouput of the different operat
 
 PRs accepted.
 
-Small note: If editing the README, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
 ## License
 
