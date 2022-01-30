@@ -267,7 +267,7 @@ namespace ChinookReader.DataAccess
         /// Returns a list of top 5 countries with most users ordered in descending order
         /// </summary>
         /// <returns>Returns a list of CustomerCountry objects</returns>
-        internal List<CustomerCountry> CustomerCountByCountry()
+        public List<CustomerCountry> CustomerCountByCountry()
         {
             List<CustomerCountry> customerCountCountryList = new();
 
