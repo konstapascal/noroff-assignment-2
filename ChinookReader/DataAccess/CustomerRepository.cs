@@ -1,18 +1,19 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using ChinookReader.DataAccess.Interfaces;
 using ChinookReader.Models;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 
 namespace ChinookReader.DataAccess
 {
-    internal class CustomerDA
-    {
+	internal class CustomerRepository : ICustomerRepository
+	{
         /// <summary>
         /// Retrieves a customer by id from the Customer table
         /// </summary>
         /// <param name="id">The id of the wanted customer</param>
         /// <returns>Returns a Customer object</returns>
-        internal Customer GetCustomer(int id)
+        public Customer GetCustomer(int customerId)
         {
             Customer customer = new();
 
@@ -29,7 +30,7 @@ namespace ChinookReader.DataAccess
                 using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
                 {
                     // Replacing parameters with actual values
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@id", customerId);
 
                     // Executing the query
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -58,7 +59,7 @@ namespace ChinookReader.DataAccess
         /// </summary>
         /// <param name="name">The name of the wanted customer</param>
         /// <returns>Returns a Customer object</returns>
-        internal List<Customer> GetCustomer(string name)
+        public List<Customer> GetCustomer(string name)
         {
             List<Customer> allCustomersList = new();
 
@@ -77,7 +78,7 @@ namespace ChinookReader.DataAccess
                     {
                         while (reader.Read())
                         {
-                            Customer customer = new ();
+                            Customer customer = new();
 
                             customer.CustomerId = reader.GetInt32(0);
                             customer.FirstName = reader.GetString(1);
@@ -101,9 +102,9 @@ namespace ChinookReader.DataAccess
         /// Retrieves all customers from the Customer table
         /// </summary>
         /// <returns>Returns a list of Customer objects</returns>
-        internal List<Customer> GetAllCustomers()
+        public List<Customer> GetAllCustomers()
         {
-            List<Customer> allCustomersList = new ();
+            List<Customer> allCustomersList = new();
 
             string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email" +
                 $" FROM Customer;";
@@ -118,7 +119,7 @@ namespace ChinookReader.DataAccess
                     {
                         while (reader.Read())
                         {
-                            Customer customer = new ();
+                            Customer customer = new();
 
                             customer.CustomerId = reader.GetInt32(0);
                             customer.FirstName = reader.GetString(1);
@@ -144,9 +145,9 @@ namespace ChinookReader.DataAccess
         /// <param name="amount">The amount of customers to retrieve</param>
         /// <param name="offset">Table row of the retrieval to start at</param>
         /// <returns>Returns a list of Customer objects</returns>
-        internal List<Customer> Get(int amount, int offset)
+        public List<Customer> GetCustomers(int amount, int offset)
         {
-            List<Customer> allCustomersList = new ();
+            List<Customer> allCustomersList = new();
 
             string sqlQuery = "SELECT CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email" +
                 $" FROM Customer ORDER BY CustomerId OFFSET @offset ROWS FETCH NEXT @amount ROWS ONLY;";
@@ -189,7 +190,7 @@ namespace ChinookReader.DataAccess
         /// </summary>
         /// <param name="newCustomer">The Customer object to add</param>
         /// <returns>Returns the number of affected rows in the table after the operation, 1 meaning a success</returns>
-        internal int AddCustomer(Customer newCustomer)
+        public int AddCustomer(Customer newCustomer)
         {
             string sqlQuery = "INSERT INTO Customer (FirstName, LastName, Country, PostalCode, Phone, Email)" +
                 $" VALUES (@name, @lastName, @country, @postalCode, @phone, @email);";
@@ -204,10 +205,10 @@ namespace ChinookReader.DataAccess
                     cmd.Parameters.AddWithValue("@lastName", newCustomer.LastName);
 
                     // These are optional values, so we are checking to see if a NULL needs to be introduced
-                    cmd.Parameters.AddWithValue("@country", (object) newCustomer.Country ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@postalCode", (object) newCustomer.PostalCode ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@phone", (object) newCustomer.PhoneNumber ?? DBNull.Value);
-                    
+                    cmd.Parameters.AddWithValue("@country", (object)newCustomer.Country ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@postalCode", (object)newCustomer.PostalCode ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@phone", (object)newCustomer.PhoneNumber ?? DBNull.Value);
+
                     cmd.Parameters.AddWithValue("@email", newCustomer.Email);
 
                     // Executing the command, updating the customer and returning number of affecter rows
@@ -221,7 +222,7 @@ namespace ChinookReader.DataAccess
         /// </summary>
         /// <param name="newCustomer">The Customer object you want to update, identified by id, containing the new values</param>
         /// <returns>Returns the number of affected rows in the table after the operation, 1 meaning a success</returns>
-        internal int UpdateCustomer(Customer newCustomer)
+        public int UpdateCustomer(Customer newCustomer)
         {
             // The SQL query to be executed
             string sqlQuery = "UPDATE Customer SET FirstName = @name, LastName = @lastName, " +
@@ -265,7 +266,7 @@ namespace ChinookReader.DataAccess
         /// </summary>
         /// <param name="newCustomer">The Customer object you want to update, identified by id, containing the new values</param>
         /// <returns>Returns the number of affected rows in the table after the operation, 1 meaning a success</returns>
-        internal List<CustomerCountry> CustomerCountByCountry()
+        public List<CustomerCountry> CustomerCountByCountry()
         {
             List<CustomerCountry> customerCountCountryList = new();
 
@@ -301,7 +302,7 @@ namespace ChinookReader.DataAccess
         /// Gets the top 5 highest spending customers and the amount they have spent, in a descending order
         /// </summary>
         /// <returns>Returns a list of CustomerSpender objects, containing customer name and amount spent</returns>
-        internal List<CustomerSpender> TopHighestSpenders()
+        public List<CustomerSpender> TopHighestSpenders()
         {
             List<CustomerSpender> highestSpendersList = new();
 
@@ -339,7 +340,7 @@ namespace ChinookReader.DataAccess
         /// </summary>
         /// <param name="customerId">The id of the customer you want to get the top genre of</param>
         /// <returns>Returns a list of CustomerGenre objects, containing the customers name, genre name and the amount of tracks for that genre</returns>
-        internal List<CustomerGenre> GetCustomerMostPopularGenre(int customerId)
+        public List<CustomerGenre> GetCustomerMostPopularGenre(int customerId)
         {
             List<CustomerGenre> popularGenreList = new();
 
